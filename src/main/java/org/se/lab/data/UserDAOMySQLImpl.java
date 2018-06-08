@@ -1,9 +1,6 @@
 package org.se.lab.data;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,20 +11,21 @@ public class UserDAOMySQLImpl
 	/*
 	 * DAO operations
 	 */
-
-
 	public boolean isValidUser(String username, String password)
 	{
-		final String SQL = "SELECT id FROM user WHERE username ='" + username
-				+ "' AND password = '" + password + "'";
+		final String SQL = "SELECT id FROM user WHERE username=? AND password=?";
 
-		Statement stmt = null;
+		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		boolean result = false;
+		Connection c = getConnection();
+
 		try
 		{
-			stmt = getConnection().createStatement();
-			rs = stmt.executeQuery(SQL);
+			pstmt = c.prepareStatement(SQL);
+			pstmt.setString(1, username);
+			pstmt.setString(2, password);
+			rs = pstmt.executeQuery();
 			result = rs.next();
 		}
 		catch (SQLException e)
@@ -36,8 +34,11 @@ public class UserDAOMySQLImpl
 		}
 		finally
 		{
-			closeResultSet(rs);
-			closeStatement(stmt);
+			if (rs != null)
+				closeResultSet(rs);
+			if (pstmt != null)
+				closePreparedStatement(pstmt);
+
 		}
 		return result;
 	}
