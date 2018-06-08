@@ -20,7 +20,7 @@ Web application deployment:
 
     $ mvn wildfly:deploy
 
-    URL: http://localhost:8080/Vulnerable-Login
+    URL: http://localhost:8080/Vulnerable-Login-Exam
 
     Testdaten: Username=homer Password=homer
 

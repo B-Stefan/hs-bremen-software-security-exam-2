@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import org.se.lab.HTMLEncoder;
 import org.se.lab.business.UserService;
 
 
@@ -22,7 +23,7 @@ public class LoginCommand
 			boolean isValid = service.login(username, password);
 			if(isValid)
 			{
-				req.setAttribute("message", "Login successful, welcome " + username + ":-)");
+				req.setAttribute("message", "Login successful, welcome " + HTMLEncoder.encodeForHTML(username) + ":-)");
 			}
 			else
 			{
