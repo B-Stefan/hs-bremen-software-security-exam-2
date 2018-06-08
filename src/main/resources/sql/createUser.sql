@@ -8,5 +8,5 @@ CREATE TABLE user
 	password VARCHAR(255) NOT NULL
 )ENGINE = INNODB;
 
-INSERT INTO user (firstname,lastname,username,password) VALUES ('Homer', 'Simpson', 'homer', 'homer');
+INSERT INTO user (firstname,lastname,username,password) VALUES ('Homer', 'Simpson', 'homer', 'Kqq3lbODaQT4LvxsoihdknrtdSBiFOHaODQY65DJBS8=');
 	
