@@ -1,0 +1,90 @@
+LabExam 2018-06-08: Vulnerable-Login
+-------------------------------------------------------------------------------
+
+Setup:
+------
+Start the MySQL server (as root):
+	[student@localhost ~]$ su
+	Password: root66
+	[root@localhost student]# systemctl start mysqld.service
+ 
+Start a MySQL client (as student):
+	$ mysql -u student -p
+	Enter password: student
+	MariaDB [(none)]> use testdb;
+	MariaDB [testdb]> show tables;
+
+	MariaDB [testdb]> source sql/createUser.sql;	
+
+Web application deployment:
+
+    $ mvn wildfly:deploy
+
+    URL: http://localhost:8080/Vulnerable-Login
+
+    Testdaten: Username=homer Password=homer
+
+Die Analyse der vorliegenden Web-Applikation hat folgende Schwachstellen
+aufgezeigt:
+
+a) Die Passwörter werden in plaintext gespeichert!
+
+b) Die Übertragung der sensiblen Daten erfolgt via HTTP!
+
+c) Es wird keine Password-Policy überprüft!
+
+d) Eine SQL Injection Attacke is möglich um den Login zu umgehen:
+   => Username: homer' OR 1 #
+
+e) Eine Reflected XSS Attacke ist möglich:
+   => Username: homer' OR 1 #<script>alert("XSS");</script>
+
+Verbessern Sie die gegebene Web-Applikation.
+
+
+1. Encrypt Passwords [15 Punkte]
+---------------------------------------------------------------------
+Speichern und vergleichen Sie die Passwörter mit einem SHA-256
+Algorithmus (inklusive Base-64 Encoding).
+
+
+2. XSS Prevention [10 Punkte]
+---------------------------------------------------------------------
+Verhindern Sie die XSS Attacke durch entsprechendes Output-Encoding.
+
+
+3. SQL Injection Prevention [10 Punkte]
+---------------------------------------------------------------------
+Verhindern Sie die SQL Injection Attacke durch Verwendung von
+Prepared Statements.
+
+
+4) Password Policy Filter [20 Punkte]
+---------------------------------------------------------------------
+Erweitern Sie die Web-Applikation um einen "PolicyFilter" der die
+Eingabe der folgenden "schlechten" Passwörter verhindert und eine
+"Password Policy Violation!" Fehlermeldung an den Browser schickt.
+
+123456
+123456789
+qwerty
+12345678
+111111
+1234567890
+1234567
+password
+
+Test: Password: 111111
+    => Password Policy Violation!
+
+Test: Password: qwerty
+    => Password Policy Violation!
+
+Test: Password: homer
+    => Login successful, welcome homer:-)
+
+
+5) HTTPS [5 Punkte]
+---------------------------------------------------------------------
+Erweitern Sie die Web-Applikation so, dass die Zugriffe ausschließlich
+über HTTPS erfolgen.
