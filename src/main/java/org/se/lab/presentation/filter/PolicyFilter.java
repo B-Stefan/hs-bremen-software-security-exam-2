@@ -12,12 +12,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-@WebFilter("/controller")
+@WebFilter("/*")
 public class PolicyFilter implements Filter {
 
     private final List<String> blackList = new ArrayList<>();
     private final int MIN_LENGTH = 3;
-    private final String loginPageUri = "/login.jsp";
 
     private final Logger logger = Logger.getLogger(PolicyFilter.class);
 
@@ -38,9 +37,11 @@ public class PolicyFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
         if(!(servletRequest instanceof HttpServletRequest)){
+            filterChain.doFilter(servletRequest,servletResponse);
             return;
         }
         if(!(servletResponse instanceof HttpServletResponse)){
+            filterChain.doFilter(servletRequest,servletResponse);
             return;
         }
 
@@ -63,17 +64,15 @@ public class PolicyFilter implements Filter {
             logger.info("Perform password policy check");
             if(!isValidPassword(password)){
                 logger.info("Password doesn't match the policy");
-                logger.info("URI:"+ httpRequest.getRequestURI());
-                logger.info(servletRequest.getParameter("action"));
                 if(Objects.equals(servletRequest.getParameter("action"), "Login")){
                     httpResponse.sendRedirect(httpRequest.getContextPath() + "/policyError.jsp");
+                    filterChain.doFilter(servletRequest,servletResponse);
                     return;
                 }
                 throw new PasswordPolicyException();
             }
         }
-
-
+        filterChain.doFilter(servletRequest,servletResponse);
 
     }
 
